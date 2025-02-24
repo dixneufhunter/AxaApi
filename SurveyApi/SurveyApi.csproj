@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\CustomerController.cs" />
+    <Compile Remove="Controllers\FoodController.cs" />
+    <Compile Remove="Controllers\SurveyController.cs" />
+    <Compile Remove="Controllers\transactioin.cs" />
+    <Compile Remove="Controllers\TransactionController.cs" />
+    <Compile Remove="DTO\Response\CustomerResponse.cs" />
+    <Compile Remove="DTO\Response\CustomerResponseDTO.cs" />
+    <Compile Remove="DTO\Response\FoodResponse.cs" />
+    <Compile Remove="Models\AppDbContext_Product.cs" />
+    <Compile Remove="Models\ApplicationDbContext.cs" />
+    <Compile Remove="Models\ApplicationDbContext_Survey.cs" />
+    <Compile Remove="Models\Customer.cs" />
+    <Compile Remove="Models\Food.cs" />
+    <Compile Remove="Models\Transaction.cs" />
+    <Compile Remove="Models\TransactionDbContext.cs" />
+    <Compile Remove="Services\JwtTokenService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.17" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.6.2" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>
