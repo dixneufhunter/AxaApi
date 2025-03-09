@@ -16,10 +16,15 @@ namespace SurveyApi.Models
         [SwaggerIgnore]
         public int ID { get; set; }
 
+        [Column(TypeName = "VARCHAR")]
+        [StringLength(250)]
         public string NAME { get; set; }
 
+        [Column(TypeName = "VARCHAR")]
+        [StringLength(250)]
         public string DESCRIPTION { get; set; }
 
+        [Column(TypeName = "decimal(18,2)")]
         public decimal PRICE { get; set; }
 
         public DateTime CREATEDAT { get; set; }

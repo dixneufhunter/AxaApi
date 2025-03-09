@@ -19,6 +19,8 @@ using System.Threading.Tasks;
 using System.Text;
 using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace SurveyApi
 {
@@ -32,19 +34,31 @@ namespace SurveyApi
 
         public IConfiguration Configuration { get; }
 
+
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
             ////// Konfigurasi JwtSettings
             //services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
 
             ////// Menambahkan JwtTokenService
             //services.AddSingleton<Services.JwtTokenService>();
 
+            //services.AddSingleton<IAuthorizationHandler, BearerAuthorizationHandler>();
+            //services.AddSingleton<IAuthorizationHandler, BearerAuthorizationHandler>();
+
+            //services.AddAuthorization(options => options.AddPolicy("Bearer",
+            //    policy => policy.AddRequirements(new BearerRequirement())
+            //    )
+            //);
+
             string connectionString = Configuration.GetConnectionString("AxaAppCon");
 
             // Menambahkan Authentication dan JWT Bearer
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            services.AddAuthentication("Bearer")
                     .AddJwtBearer(options =>
                     {
                         options.TokenValidationParameters = new TokenValidationParameters
@@ -58,11 +72,17 @@ namespace SurveyApi
                             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SecretKey"]))
                         };
                     });
-            //services.AddDbContext<AppDbContext_Product>(options =>
-            //options.UseSqlServer(connectionString));
 
+            // Add authorization policies
+            /*services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("ManagerOnly", policy => policy.RequireClaim("Department", "Manager"));
+                // Add more policies as needed
+            });*/
+
+            // Menambahkan services untuk container.
             services.AddControllers();
-
 
             services.AddSwaggerGen(c =>
             {
@@ -76,7 +96,8 @@ namespace SurveyApi
                     Type = SecuritySchemeType.ApiKey,
                     BearerFormat = "JWT",
                     //Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
-                    Scheme = "Bearer",
+                    //Scheme = "Bearer",
+                    Scheme = JwtBearerDefaults.AuthenticationScheme,
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -86,11 +107,14 @@ namespace SurveyApi
                             {
                                 Reference = new OpenApiReference
                                 {
+                                    //Type = ReferenceType.SecurityScheme,
+                                    //Id = "Bearer"
                                     Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
+                                    Id = JwtBearerDefaults.AuthenticationScheme
                                 }
                             },
-                            new string[] {}
+                            //new string[] {}
+                            Array.Empty<string>()
                     }
                 });
 
@@ -102,10 +126,27 @@ namespace SurveyApi
 
             //PRODUCT
             services.AddDbContext<AppDbContext_Product>(options => options.UseSqlServer(connectionString));
-            services.AddControllers().AddNewtonsoftJson(o =>
-            {
-                o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            });
+
+            //services.AddControllers().AddNewtonsoftJson(o =>
+            //{
+            //    o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            //});
+
+            //services.AddAuthorization(options =>
+            //{
+
+            //    options.AddPolicy("Admin",
+            //        authBuilder =>
+            //        {
+            //            authBuilder.RequireRole("Administrators");
+            //        });
+
+            //});
+
+            // Enables [Authorize] attribute
+            services.AddAuthorization();
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -136,11 +177,11 @@ namespace SurveyApi
 
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            // Mengaktifkan Authentication
+            // Mengaktifkan Authentication (must come before Authorization)
             app.UseAuthentication();
 
             // Mengaktifkan Authorization

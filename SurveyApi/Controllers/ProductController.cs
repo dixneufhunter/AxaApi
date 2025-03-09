@@ -12,13 +12,19 @@ using SurveyApi.Data;
 using Newtonsoft.Json;
 using SurveyApi.DTO.Response;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SurveyApi.Controllers
 {
-    
+
     //[Route("[controller]")]
-    [Route("api/[controller]/[action]")]
     [ApiController]
+    [Route("api/[controller]/[action]")]
+    [Authorize]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(Policy = "AdminOnly")]
 
     public class ProductController : ControllerBase
     {
@@ -44,7 +50,6 @@ namespace SurveyApi.Controllers
             return data;
 
         }
-
 
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] Product newProd)
