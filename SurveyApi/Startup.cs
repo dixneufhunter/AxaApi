@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Serilog;
 
 namespace SurveyApi
 {
@@ -84,6 +85,21 @@ namespace SurveyApi
             // Menambahkan services untuk container.
             services.AddControllers();
 
+            // Menambahkan Serilog
+            //DateTime _now = DateTime.Now;
+            //string tanggal = Convert.ToString(_now);
+
+            Log.Logger = new LoggerConfiguration()
+                //.MinimumLevel.Debug()
+                .MinimumLevel.Information()
+                .WriteTo.Console()
+                .WriteTo.File("logs/myLog-.txt", rollingInterval: RollingInterval.Day) //menambahkan interval waktu perhari
+                .CreateLogger();
+
+            //Log.Logger = new LoggerConfiguration()
+            //   .ReadFrom.Configuration(builder).CreateLogger();
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SurveyApi", Version = "v1" });
@@ -118,7 +134,11 @@ namespace SurveyApi
                     }
                 });
 
+
+
             });
+
+           
 
             //services.AddDbContext<ApplicationDbContext_Survey>(options => options.UseSqlServer(connectionString));
             //USER
@@ -176,6 +196,9 @@ namespace SurveyApi
 
 
             }
+
+            // Mengaktifkan Serilog
+            //app.UseSerilogRequestLogging();
 
             //app.UseHttpsRedirection();
 
