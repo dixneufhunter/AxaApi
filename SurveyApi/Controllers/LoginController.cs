@@ -18,11 +18,14 @@ namespace SurveyApi.Controllers
     //[Route("api/[controller]")]
     [Route("api/[controller]/[action]")]
     [ApiController]
+    //[Authorize(Roles = "Administrator")]
     public class LoginController : ControllerBase
     {
         private IConfiguration _config;
         private readonly AppDbContext_User _dbContext;
 
+        //public IActionResult Index() =>
+        //Content("Administrator");
 
         public LoginController(IConfiguration config, AppDbContext_User dbContext)
         {
@@ -39,6 +42,7 @@ namespace SurveyApi.Controllers
 
 
         //[AllowAnonymous]
+        //[HttpPost("Login")]
         [HttpPost]
         public IActionResult Login([FromBody] UserAccount login)
         {
@@ -48,7 +52,7 @@ namespace SurveyApi.Controllers
             if (user != null)
             {
                 var tokenString = GenerateJSONWebToken(user);
-                response = Ok(new { token = tokenString });
+                response = Ok(new { token = "Bearer " + tokenString }); //harus menambahkan "Barear " agar dapat meng-akses controller
             }
 
             return response;
